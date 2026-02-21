@@ -373,6 +373,247 @@ const AnimatedVideoCard = () => {
   )
 }
 
+const AnimatedPDFCard = () => {
+  const [displayedText, setDisplayedText] = useState('')
+  const [stage, setStage] = useState<'initial' | 'typing' | 'scanning' | 'expanded'>('initial')
+  const [scanProgress, setScanProgress] = useState(0)
+  const [selectedResult, setSelectedResult] = useState<number | null>(null)
+
+  const fullQuery = "terms and conditions"
+  const pdfFiles = [
+    { id: 1, name: 'contract.pdf', pages: 12 },
+    { id: 2, name: 'agreement.pdf', pages: 8 }
+  ]
+
+  useEffect(() => {
+    const cycle = setInterval(() => {
+      setStage('initial')
+      setDisplayedText('')
+      setScanProgress(0)
+      setSelectedResult(null)
+    }, 12000)
+
+    return () => clearInterval(cycle)
+  }, [])
+
+  useEffect(() => {
+    if (stage === 'initial') {
+      let index = 0
+      const typeInterval = setInterval(() => {
+        if (index <= fullQuery.length) {
+          setDisplayedText(fullQuery.slice(0, index))
+          index++
+        } else {
+          clearInterval(typeInterval)
+          setTimeout(() => setStage('scanning'), 200)
+        }
+      }, 50)
+
+      return () => clearInterval(typeInterval)
+    }
+  }, [stage])
+
+  useEffect(() => {
+    if (stage === 'scanning') {
+      setScanProgress(0)
+      const scanInterval = setInterval(() => {
+        setScanProgress(p => {
+          if (p >= 100) {
+            clearInterval(scanInterval)
+            setTimeout(() => {
+              setSelectedResult(0)
+              setStage('expanded')
+            }, 300)
+            return 100
+          }
+          return p + 2.5
+        })
+      }, 25)
+
+      return () => clearInterval(scanInterval)
+    }
+  }, [stage])
+
+  return (
+    <div className="group relative card-premium h-screen md:h-[500px] flex flex-col">
+      <div className="absolute -inset-1 bg-gradient-to-r from-red-500/20 via-accent/10 to-orange-500/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500 -z-10" />
+
+      <div className="relative p-6 border-b border-slate-700/40 bg-gradient-to-r from-slate-800/40 to-slate-900/40 backdrop-blur-sm">
+        <h3 className="text-base font-semibold text-slate-100 mb-1">PDFs & Documents</h3>
+        <p className="text-xs text-slate-400">Extract and search every page, every paragraph from your PDFs and documents instantly.</p>
+      </div>
+
+      <div className="relative px-6 pt-6 pb-4">
+        <input
+          type="text"
+          value={displayedText}
+          readOnly
+          placeholder="Search inside PDFs..."
+          className="w-full bg-slate-800/30 text-slate-100 placeholder-slate-500 px-4 py-3 rounded-lg text-sm focus:outline-none border border-slate-600/30 transition-all duration-300 group-hover:border-slate-500/50 group-hover:bg-slate-800/50 backdrop-blur-sm"
+        />
+      </div>
+
+      <div className="relative flex-1 px-6 pb-6 flex items-center justify-center overflow-hidden">
+        {(stage === 'initial' || stage === 'typing' || stage === 'scanning') && (
+          <div className="w-full space-y-3">
+            {pdfFiles.map((pdf, idx) => (
+              <div key={pdf.id} className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg border border-slate-700/30 hover:border-slate-600/50 transition-all duration-300">
+                <svg className="w-6 h-6 text-red-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.3A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z" />
+                </svg>
+                <div className="flex-1">
+                  <p className="text-sm text-slate-200 font-medium">{pdf.name}</p>
+                  <p className="text-xs text-slate-400">{pdf.pages} pages</p>
+                </div>
+                {stage === 'scanning' && (
+                  <div className="text-xs text-slate-400">{Math.min(scanProgress, 100)}%</div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {stage === 'expanded' && selectedResult !== null && (
+          <div className="w-full space-y-3 animate-fade-in">
+            <div className="px-4 py-2 bg-red-500/20 border border-red-400/60 rounded-lg backdrop-blur-sm">
+              <p className="text-xs font-semibold text-red-300">✓ Found on page 7 of contract.pdf</p>
+            </div>
+            <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-4">
+              <p className="text-sm text-slate-300 leading-relaxed">
+                Both parties agree to the <span className="font-bold text-red-300">terms and conditions</span> as stated herein. These terms shall govern...
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+const AnimatedDataCard = () => {
+  const [displayedText, setDisplayedText] = useState('')
+  const [stage, setStage] = useState<'initial' | 'typing' | 'scanning' | 'expanded'>('initial')
+  const [scanProgress, setScanProgress] = useState(0)
+  const [selectedData, setSelectedData] = useState<number | null>(null)
+
+  const fullQuery = "q3 revenue"
+  const dataFiles = [
+    { id: 1, name: 'sales_2024.xlsx', rows: 1250 },
+    { id: 2, name: 'metrics.csv', rows: 580 }
+  ]
+
+  useEffect(() => {
+    const cycle = setInterval(() => {
+      setStage('initial')
+      setDisplayedText('')
+      setScanProgress(0)
+      setSelectedData(null)
+    }, 12000)
+
+    return () => clearInterval(cycle)
+  }, [])
+
+  useEffect(() => {
+    if (stage === 'initial') {
+      let index = 0
+      const typeInterval = setInterval(() => {
+        if (index <= fullQuery.length) {
+          setDisplayedText(fullQuery.slice(0, index))
+          index++
+        } else {
+          clearInterval(typeInterval)
+          setTimeout(() => setStage('scanning'), 200)
+        }
+      }, 50)
+
+      return () => clearInterval(typeInterval)
+    }
+  }, [stage])
+
+  useEffect(() => {
+    if (stage === 'scanning') {
+      setScanProgress(0)
+      const scanInterval = setInterval(() => {
+        setScanProgress(p => {
+          if (p >= 100) {
+            clearInterval(scanInterval)
+            setTimeout(() => {
+              setSelectedData(0)
+              setStage('expanded')
+            }, 300)
+            return 100
+          }
+          return p + 2.5
+        })
+      }, 25)
+
+      return () => clearInterval(scanInterval)
+    }
+  }, [stage])
+
+  return (
+    <div className="group relative card-premium h-screen md:h-[500px] flex flex-col">
+      <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 via-accent/10 to-cyan-500/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500 -z-10" />
+
+      <div className="relative p-6 border-b border-slate-700/40 bg-gradient-to-r from-slate-800/40 to-slate-900/40 backdrop-blur-sm">
+        <h3 className="text-base font-semibold text-slate-100 mb-1">Data Files</h3>
+        <p className="text-xs text-slate-400">Search inside spreadsheets and data files — every cell, every row is indexed.</p>
+      </div>
+
+      <div className="relative px-6 pt-6 pb-4">
+        <input
+          type="text"
+          value={displayedText}
+          readOnly
+          placeholder="Search data files..."
+          className="w-full bg-slate-800/30 text-slate-100 placeholder-slate-500 px-4 py-3 rounded-lg text-sm focus:outline-none border border-slate-600/30 transition-all duration-300 group-hover:border-slate-500/50 group-hover:bg-slate-800/50 backdrop-blur-sm"
+        />
+      </div>
+
+      <div className="relative flex-1 px-6 pb-6 flex items-center justify-center overflow-hidden">
+        {(stage === 'initial' || stage === 'typing' || stage === 'scanning') && (
+          <div className="w-full space-y-3">
+            {dataFiles.map((file, idx) => (
+              <div key={file.id} className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-lg border border-slate-700/30 hover:border-slate-600/50 transition-all duration-300">
+                <svg className="w-6 h-6 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h12a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6z" />
+                </svg>
+                <div className="flex-1">
+                  <p className="text-sm text-slate-200 font-medium">{file.name}</p>
+                  <p className="text-xs text-slate-400">{file.rows} rows</p>
+                </div>
+                {stage === 'scanning' && (
+                  <div className="text-xs text-slate-400">{Math.min(scanProgress, 100)}%</div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {stage === 'expanded' && selectedData !== null && (
+          <div className="w-full space-y-3 animate-fade-in">
+            <div className="px-4 py-2 bg-blue-500/20 border border-blue-400/60 rounded-lg backdrop-blur-sm">
+              <p className="text-xs font-semibold text-blue-300">✓ Found in sales_2024.xlsx, Row 145</p>
+            </div>
+            <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-4">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-xs text-slate-400">Q3 Revenue</p>
+                  <p className="text-lg font-bold text-blue-300">$2.54M</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400">Growth</p>
+                  <p className="text-lg font-bold text-emerald-300">+23%</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 const AnimatedNoteCard = () => {
   const [displayedText, setDisplayedText] = useState('')
   const [showResults, setShowResults] = useState(false)
@@ -401,8 +642,10 @@ const AnimatedNoteCard = () => {
   }, [])
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 to-slate-950 rounded-2xl overflow-hidden border border-slate-700 h-screen md:h-[500px] flex flex-col shadow-xl hover:shadow-2xl transition-all duration-300">
-      <div className="p-6 border-b border-slate-700 bg-gradient-to-r from-slate-800/50 to-slate-900/50 backdrop-blur-sm">
+    <div className="group relative card-premium h-screen md:h-[500px] flex flex-col">
+      <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 via-accent/10 to-blue-500/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500 -z-10" />
+
+      <div className="p-6 border-b border-slate-700/40 bg-gradient-to-r from-slate-800/40 to-slate-900/40 backdrop-blur-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <div className={`w-2 h-2 rounded-full transition-colors ${showResults ? 'bg-emerald-500' : 'bg-amber-500'}`} />
