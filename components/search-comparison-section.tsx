@@ -269,18 +269,20 @@ const AnimatedVideoCard = () => {
       </div>
 
       <div className="flex-1 p-8 overflow-y-auto flex items-center justify-center">
-        {/* Initial state: Show 3 file cards */}
+        {/* Initial state: Show video files */}
         {(stage === 'initial' || stage === 'typing') && (
           <div className="flex gap-8 justify-center items-center h-full transition-opacity duration-500">
-            {files.map((file, idx) => (
-              <div key={file.id} className="flex flex-col items-center gap-3 transition-opacity duration-500" style={{ opacity: fadeOpacity[idx] }}>
+            {videos.map((video, idx) => (
+              <div key={video.id} className="flex flex-col items-center gap-3 transition-opacity duration-500" style={{ opacity: fadeOpacity[idx] }}>
                 <div className="w-28 h-36 bg-gradient-to-br from-slate-700/50 to-slate-800/50 rounded-xl border border-slate-600/40 flex flex-col items-center justify-center gap-2 shadow-lg backdrop-blur-sm hover:shadow-xl transition-all duration-300">
                   <div className="text-slate-300">
-                    <FileIcon />
+                    <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm4 2v4h8V8H6z" />
+                    </svg>
                   </div>
-                  <p className="text-xs text-slate-400 font-medium text-center px-2">CSV</p>
+                  <p className="text-xs text-slate-400 font-medium text-center px-2">VIDEO</p>
                 </div>
-                <p className="text-xs text-slate-300 font-medium text-center max-w-24">{file.name}</p>
+                <p className="text-xs text-slate-300 font-medium text-center max-w-24">{video.name}</p>
               </div>
             ))}
           </div>
