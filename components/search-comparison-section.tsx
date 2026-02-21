@@ -191,6 +191,7 @@ const AnimatedVideoCard = () => {
   const [displayedText, setDisplayedText] = useState('')
   const [fadeOpacity, setFadeOpacity] = useState([1, 1])
   const [scanProgress, setScanProgress] = useState([0, 0])
+  const [highlightedRows, setHighlightedRows] = useState<number[]>([])
 
   const fullQuery = "pricing"
   const videos = [
@@ -205,6 +206,7 @@ const AnimatedVideoCard = () => {
       setDisplayedText('')
       setFadeOpacity([1, 1])
       setScanProgress([0, 0])
+      setHighlightedRows([])
     }, 12000)
 
     return () => clearInterval(cycle)
@@ -232,6 +234,7 @@ const AnimatedVideoCard = () => {
   useEffect(() => {
     if (stage === 'scanning') {
       setTimeout(() => {
+        setHighlightedRows([3, 7, 12])
         setFadeOpacity([0, 1])
         setStage('expanded')
       }, 800)
